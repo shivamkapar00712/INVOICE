@@ -4,12 +4,14 @@ const { Product } = require("../model/Product.model");
 
 class InventoryController {
   create = async (req, res) => {
+    console.log("working");
+    console.log(req.body);
     const product = new Product({
       name: req.body.name,
-      buyPrice: req.body.buyPrice,
-      gst: req.body.gst,
-      profit: req.body.profit,
-      finalPrice: req.body.finalPrice,
+      buyPrice: parseInt(req.body.price),
+      gst: parseInt(req.body.gst),
+      profit: parseInt(req.body.profit),
+      finalPrice: parseInt(req.body.finalPrice),
     });
     const inventory = new Inventory({
       userId: req.user._id,
@@ -20,6 +22,9 @@ class InventoryController {
     try {
       await product.save();
       await inventory.save();
+      res
+        .status(201)
+        .send({ message: "Successfully Product added to inventory" });
     } catch (ex) {
       product.delete();
       inventory.delete();
@@ -28,10 +33,11 @@ class InventoryController {
   };
   showAllItemsOfInventory = async (req, res) => {
     try {
+      console.log(req.user);
       const inventory = await Inventory.aggregate([
         {
           $match: {
-            userId: req.user._id,
+            userId: mongoose.Types.ObjectId(req.user._id),
           },
         },
         {
@@ -57,11 +63,14 @@ class InventoryController {
           },
         },
       ]);
-      res.send({ error: false, data: inventory });
+      res.send({ error: false, data: inventory[0] });
     } catch (ex) {
       return res.status(400).send({ error: true, message: ex.message });
     }
   };
+  // deleteItem = async (req,res) =>{
+  //   const item = await Inventory.findById();
+  // }
   //   showForParticular = async (req, res) => {
   //     const product = await Product.find({});
 

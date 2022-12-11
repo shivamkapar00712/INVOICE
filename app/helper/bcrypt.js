@@ -6,7 +6,7 @@ Bcrypt.createSalt = (rounds) => {
   return bcrpyt.genSalt(rounds);
 };
 
-Bcrypt.hash = ({ data, salt }) => {
+Bcrypt.hash = async ({ data, salt }) => {
   return bcrpyt.hash(data, salt);
 };
 

@@ -27,7 +27,7 @@ class UserController {
     });
     try {
       const salt = await hasher.createSalt(10);
-      const hash = await hasher.hash(req.body.password, salt);
+      const hash = await hasher.hash({ data: req.body.password, salt });
 
       user.password = hash;
       await user.save();
