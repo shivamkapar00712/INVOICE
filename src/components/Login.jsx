@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import httpService from "../services/http.service";
 import userService from "../services/user.service";
 const Login = () => {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ const Login = () => {
         const { data } = result;
         console.log(data.token);
         userService.setToken(data.token);
-        navigate("/inventory");
+        httpService.setJWT(data.token);
+        window.location.href = "/inventory";
         toast.success("Successfully Login");
       })
       .catch((err) => toast(err.response.data.message));

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import billService from "../../services/bill.service";
 import inventoryService from "../../services/inventory.service";
 
 const handleAddMore = (
@@ -18,12 +19,13 @@ const handleAddMore = (
   const arr = [...data];
   if (arr.length === 0) {
     arr.push({
-      name: "",
-      price: "",
-      quantity: "",
-      profit: "",
-      gst: "",
-      finalPrice: "",
+      date: "",
+      time: "",
+      customerName: "",
+      numberOfProducts: 0,
+      amount: 0,
+      discount: 0,
+      total: 0,
     });
   }
   if (buttonText != "Save") {
@@ -51,25 +53,35 @@ const handleChangeInput = (e, data, setData) => {
   setData([...arr]);
 };
 
-const Inventory = () => {
+const BillTable = () => {
   const navigate = useNavigate();
   const [inventoryData, setInventoryData] = useState([]);
   const [data, setData] = useState([]);
   const [buttonText, setButtonText] = useState("+ Add More");
   useEffect(() => {
-    inventoryService
+    billService
       .getAllData()
       .then((res) => {
-        const data = [...res.data.data.products];
+        console.log(res);
+        const data = [...res.data.data];
+        console.log(res.data.data);
         let array = [];
         data.forEach((element) => {
           let arr = {};
-          arr.name = element.details.name;
-          arr.price = element.details.buyPrice;
-          arr.quantity = element.quantity;
-          arr.profit = element.details.profit;
-          arr.gst = element.details.gst;
-          arr.finalPrice = element.details.finalPrice;
+          let amount = 0;
+          let discount = 0;
+          element.product.map((ele) => {
+            amount = amount + parseInt(ele.price);
+            discount = discount + parseInt(ele.discount);
+          });
+          let total = amount - discount;
+          arr.date = element.createdAt;
+          arr.customerName = element.customer.name;
+          arr.numberOfProducts = [...element.product].length;
+          arr.amount = amount;
+          arr.invoice = element.customer.invoice;
+          arr.discount = discount;
+          arr.total = total;
           array.push(arr);
         });
         console.log(array);
@@ -82,14 +94,14 @@ const Inventory = () => {
       <table className="w-full text-left shadow-2xl w-[85%] m-auto mt-24 bg-[#ffffff]">
         <thead className="text-2xl bg-slate-900 text-[#ffffff]">
           <tr>
-            <th className="p-2">Product Name</th>
-            <th className="p-2">Buy Price</th>
-            <th className="p-2">quantity</th>
-            <th className="p-2">Profit</th>
-            <th className="p-2">GST</th>
-
-            <th className="p-2">Final Price</th>
-
+            <th className="p-2">Date</th>
+            <th className="p-2">Time</th>
+            <th className="p-2">Invoice No.</th>
+            <th className="p-2">Customer Name</th>
+            <th className="p-2">No. of Products</th>
+            <th className="p-2">Amount</th>
+            <th className="p-2">Discount</th>
+            <th className="p-2">Total</th>
             <th className="p-2">Action</th>
           </tr>
         </thead>
@@ -97,26 +109,37 @@ const Inventory = () => {
           {inventoryData.map((ele) => (
             <tr key={data.length}>
               <td className="p-2">
-                <p type="text">{ele.name}</p>
+                <p type="text">
+                  {new Date(ele.date).toISOString().slice(0, 10)}
+                </p>
               </td>
               <td className="p-2">
-                <p>{ele.price}</p>
+                <p type="text">
+                  {`${new Date(ele.date).getHours()}:${new Date(
+                    ele.date
+                  ).getMinutes()}`}
+                </p>
               </td>
               <td className="p-2">
-                <p>{ele.quantity}</p>
+                <p>{ele.invoice}</p>
               </td>
               <td className="p-2">
-                <p>{ele.profit}</p>
+                <p>{ele.customerName}</p>
               </td>
               <td className="p-2">
-                <p>{ele.GST}</p>
+                <p>{ele.numberOfProducts}</p>
               </td>
               <td className="p-2">
-                <p>{ele.finalPrice}</p>
+                <p>{ele.amount}</p>
+              </td>
+              <td className="p-2">
+                <p>{ele.discount}</p>
+              </td>
+              <td className="p-2">
+                <p>{ele.total}</p>
               </td>
               <td>
-                <button className="bg-blue-300 px-4">Edit</button>
-                <button className="bg-red-300 px-4">Delete</button>
+                <button className="bg-blue-300 px-4">Download</button>
               </td>
             </tr>
           ))}
@@ -189,30 +212,7 @@ const Inventory = () => {
                   }}
                 ></input>
               </td>
-              <td>
-                {
-                  <div className="w-full">
-                    <button
-                      className="bg-blue-600 rounded-full p-2 w-32 text-[#ffffff] m-auto"
-                      onClick={(e) =>
-                        handleAddMore(
-                          e,
-                          data,
-                          setData,
-                          buttonText,
-                          setButtonText,
-
-                          inventoryData,
-                          setInventoryData,
-                          navigate
-                        )
-                      }
-                    >
-                      {buttonText}
-                    </button>
-                  </div>
-                }
-              </td>
+              <td></td>
             </tr>
           ))}
         </tbody>
@@ -223,31 +223,10 @@ const Inventory = () => {
           <td></td>
           <td></td>
           <td></td>
-          {data.length === 0 && (
-            <div className="w-full">
-              <button
-                className="bg-blue-600 rounded-full p-2 w-32 text-[#ffffff] m-auto"
-                onClick={(e) =>
-                  handleAddMore(
-                    e,
-                    data,
-                    setData,
-                    buttonText,
-                    setButtonText,
-                    inventoryData,
-                    setInventoryData,
-                    navigate
-                  )
-                }
-              >
-                {buttonText}
-              </button>
-            </div>
-          )}
         </tfoot>
       </table>
     </div>
   );
 };
 
-export default Inventory;
+export default BillTable;

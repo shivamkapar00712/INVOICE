@@ -15,7 +15,7 @@ const LoginForm = () => {
           type="submit"
           className="bg-blue-600 rounded-[2rem] w-32 text-[#ffffff]"
         >
-          Login2
+          Login
         </button>
       </div>
     </form>
