@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-axios.defaults.baseURL = "http://localhost:8081/api";
+axios.defaults.baseURL = "https://invoice-node.onrender.com";
 
 function setJWT() {
   axios.defaults.headers.common["authorization"] =
