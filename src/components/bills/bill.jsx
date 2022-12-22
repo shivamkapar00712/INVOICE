@@ -91,6 +91,9 @@ const BillTable = () => {
   }, [data]);
   return (
     <div className="h-screen p-2 ">
+      <div className="w-full text-left shadow-2xl w-[85%] m-auto mt-4 bg-[#ffffff] text-3xl rounded-8 px-8 py-4">
+        <h1 style={{ fontWeight: "bold" }}>Bills</h1>
+      </div>
       <table className="w-full text-left shadow-2xl w-[85%] m-auto mt-24 bg-[#ffffff]">
         <thead className="text-2xl bg-slate-900 text-[#ffffff]">
           <tr>

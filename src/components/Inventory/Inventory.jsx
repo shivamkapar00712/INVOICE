@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import inventoryService from "../../services/inventory.service";
+import Model from "../common/model";
 
 const handleAddMore = (
   e,
@@ -44,6 +45,7 @@ const handleAddMore = (
     setData([]);
   }
 };
+
 const handleChangeInput = (e, data, setData) => {
   const { currentTarget: input } = e;
   const arr = [...data];
@@ -55,6 +57,20 @@ const Inventory = () => {
   const navigate = useNavigate();
   const [inventoryData, setInventoryData] = useState([]);
   const [data, setData] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const handleSaveModelDetails = (data) => {
+    console.log(data);
+    const payload = { ...data };
+    console.log(data);
+    inventoryService
+      .create(payload)
+      .then((res) => {
+        toast.success(res.data.message);
+        window.location.href = "/inventory";
+        setShowModal(false);
+      })
+      .catch((err) => toast.error(err.response.data));
+  };
   const [buttonText, setButtonText] = useState("+ Add More");
   useEffect(() => {
     inventoryService
@@ -79,7 +95,10 @@ const Inventory = () => {
   }, [data]);
   return (
     <div className="h-screen p-2 ">
-      <table className="w-full text-left shadow-2xl w-[85%] m-auto mt-24 bg-[#ffffff]">
+      <div className="w-full text-left shadow-2xl w-[85%] m-auto mt-4 bg-[#ffffff] text-3xl rounded-8 px-8 py-4">
+        <h1 style={{ fontWeight: "bold" }}>Inventory</h1>
+      </div>
+      <table className="w-full text-left shadow-2xl w-[85%] m-auto mt-16 bg-[#ffffff]">
         <thead className="text-2xl bg-slate-900 text-[#ffffff]">
           <tr>
             <th className="p-2">Product Name</th>
@@ -189,30 +208,7 @@ const Inventory = () => {
                   }}
                 ></input>
               </td>
-              <td>
-                {
-                  <div className="w-full">
-                    <button
-                      className="bg-blue-600 rounded-full p-2 w-32 text-[#ffffff] m-auto"
-                      onClick={(e) =>
-                        handleAddMore(
-                          e,
-                          data,
-                          setData,
-                          buttonText,
-                          setButtonText,
-
-                          inventoryData,
-                          setInventoryData,
-                          navigate
-                        )
-                      }
-                    >
-                      {buttonText}
-                    </button>
-                  </div>
-                }
-              </td>
+              <td></td>
             </tr>
           ))}
         </tbody>
@@ -223,27 +219,18 @@ const Inventory = () => {
           <td></td>
           <td></td>
           <td></td>
-          {data.length === 0 && (
-            <div className="w-full">
-              <button
-                className="bg-blue-600 rounded-full p-2 w-32 text-[#ffffff] m-auto"
-                onClick={(e) =>
-                  handleAddMore(
-                    e,
-                    data,
-                    setData,
-                    buttonText,
-                    setButtonText,
-                    inventoryData,
-                    setInventoryData,
-                    navigate
-                  )
-                }
-              >
-                {buttonText}
-              </button>
-            </div>
-          )}
+          <button
+            className="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+            type="button"
+            onClick={() => setShowModal(true)}
+          >
+            Add Product
+          </button>
+          <Model
+            showModal={showModal}
+            save={handleSaveModelDetails}
+            setShowModal={setShowModal}
+          />
         </tfoot>
       </table>
     </div>

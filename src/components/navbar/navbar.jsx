@@ -26,6 +26,11 @@ const NavBar = () => {
             )}
             {user && (
               <NavLink to="/bills" className="hover:text-green-400">
+                Bills
+              </NavLink>
+            )}
+            {user && (
+              <NavLink to="/bill/new" className="hover:text-green-400">
                 Bill Now
               </NavLink>
             )}

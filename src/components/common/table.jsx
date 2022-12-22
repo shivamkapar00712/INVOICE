@@ -17,7 +17,6 @@ const handleAddMore = (
   const arr = [...data];
   if (arr.length === 0) {
     arr.push({
-      _id: "",
       name: "",
       quantity: "",
       price: "",
@@ -30,10 +29,11 @@ const handleAddMore = (
     setButtonText("Save");
     console.log(product);
     setData([...arr]);
+    console.log(inventoryData);
+    // setInventoryData([...inventoryData]);
   } else {
     const inventory = [...inventoryData];
-    arr[0]._id = product.current.id;
-    arr[0].name = product.current.value;
+
     inventory.push(arr[0]);
 
     console.log("inventory", inventory);
@@ -62,9 +62,10 @@ const Table = ({ shareDataToParent }) => {
   useEffect(() => {
     inventoryService.getAllData().then((res) => {
       setTableData([...res.data.data.products]);
-      console.log(tableData);
     });
-  }, [data, inventoryData]);
+    const invent = [...inventoryData];
+    setInventoryData([...invent]);
+  }, [data]);
   return (
     <div>
       <table className="w-full text-left">
@@ -120,11 +121,14 @@ const Table = ({ shareDataToParent }) => {
                 ></input>
               </td> */}
               <td>
-                <select onChange={(e) => setPrice(product.current.value)}>
-                  {console.log(product.current.getAttribute("name"), price)}
+                <select
+                  name="name"
+                  onChange={(e) => handleChangeInput(e, data, setData)}
+                >
+                  <option value="">Select</option>
                   {tableData.map((res) => (
                     <option
-                      name={res.details.price}
+                      name="name"
                       ref={product}
                       price={res.details.price}
                       value={res.details.name}
@@ -151,19 +155,15 @@ const Table = ({ shareDataToParent }) => {
               </td>
               <td className="p-2">
                 {/* {console.log(product.current.getAttribute("work"))} */}
-                <label
+                <input
                   type="text"
-                  value={
-                    product && product.current
-                      ? product.current.getAttribute("price")
-                      : ""
-                  }
+                  value={ele.price}
                   className="w-full h-8 p-4"
                   name="price"
                   onChange={(e) => {
                     handleChangeInput(e, data, setData);
                   }}
-                ></label>
+                ></input>
               </td>
               <td className="p-2">
                 <input

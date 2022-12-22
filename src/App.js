@@ -5,7 +5,7 @@ import LoginForm from "./components/Login/login";
 import Inventory from "./components/Inventory/Inventory";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import Model from "./components/common/model";
 import NavBar from "./components/navbar/navbar";
 import { Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
@@ -29,6 +29,7 @@ function App() {
           <Route path="/register" element={<RegisterUser />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/bill/new" element={<Form />} />
+          <Route path="/model" element={<Model />} />
         </Routes>
       </div>
     </div>
